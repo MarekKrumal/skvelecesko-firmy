@@ -141,12 +141,15 @@ footer a{color:#a996bd}
   .navlinks{display:none}
   .hero{padding-top:44px}
   .hero .grid,.cols,.steps,.steps.four,.tracks{grid-template-columns:1fr;gap:30px}
-  .steps,.steps.four{gap:14px}
+  .steps,.steps.four{gap:12px}
   .step::after{display:none}
+  .step{display:grid;grid-template-columns:38px 1fr;column-gap:14px;padding:16px 18px}
+  .step .k{grid-row:span 2;margin:0}
+  .step h3{margin:7px 0 4px}
   .hero .bar{margin-top:40px}
   .hero .bar .wrap{gap:18px 30px}
   .askbox ul{grid-template-columns:1fr}
-  section{padding:52px 0}
+  section{padding:44px 0}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 
