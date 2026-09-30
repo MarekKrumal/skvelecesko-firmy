@@ -120,6 +120,24 @@ details p{font-size:15.5px;color:var(--soft);margin-top:12px;line-height:1.6}
 .final{background:var(--deep);color:#fff}
 .final h2{color:#fff}
 .final .lead{color:#d5c7e4}
+.qform{margin-top:26px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:26px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.qgrid label{display:flex;flex-direction:column;gap:7px;font-size:14px;font-weight:600;color:#e9e0f3}
+.qgrid .full{grid-column:1/-1}
+.qgrid input,.qgrid select,.qgrid textarea{font:inherit;font-weight:400;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid transparent;border-radius:10px;padding:11px 13px;width:100%}
+.qgrid textarea{resize:vertical}
+.qgrid input:focus,.qgrid select:focus,.qgrid textarea:focus{outline:none;border-color:var(--coral)}
+.qgrid .bad{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,88,89,.25)}
+.qgrid .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.qfoot{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap;align-items:center}
+.qfoot button{border:0;cursor:pointer;font:inherit;font-weight:600}
+.qfoot button[disabled]{opacity:.6;cursor:wait}
+.qmsg{margin-top:14px;font-weight:600;min-height:1em}
+.qmsg.ok{color:#9ff0c0}.qmsg.err{color:#ffb3b3}
+.qgdpr{margin-top:6px;font-size:13px;color:#b9a6cf}
+.qform.sent .qgrid,.qform.sent .qfoot,.qform.sent .qgdpr{display:none}
+@media (max-width:640px){.qgrid{grid-template-columns:1fr}.qform{padding:18px}}
+
 .askbox{background:rgba(255,255,255,.08);border-radius:18px;padding:28px;margin-top:8px}
 .askbox ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px}
 .askbox li{font-size:15px;color:#e5dbf0;display:flex;gap:11px}
@@ -375,19 +393,33 @@ html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margi
 <section class="final" id="kontakt">
   <div class="wrap">
     <h2>Pošlete nám zadání, kalkulaci máte obvykle do druhého dne</h2>
-    <p class="lead">Nezávazně a bez registrace. Stačí čtyři údaje.</p>
-    <div class="askbox">
-      <ul>
-        <li>Kolik voucherů a v jaké hodnotě</li>
-        <li>Elektronicky, nebo v dárkovém balení</li>
-        <li>Do kdy je potřebujete mít</li>
-        <li>Vlastní dopis, logo nebo vzkaz</li>
-      </ul>
-    </div>
-    <div class="cta" style="display:flex;gap:14px;margin-top:26px;flex-wrap:wrap">
-      <a class="btn" target="_top" href="mailto:barbora.taftova@skvelecesko.cz?subject=Pozadavek%20na%20firemni%20vouchery">Napsat e-mail</a>
-      <a class="btn ghost" target="_top" href="tel:+420775686011">Zavolat: +420 775 686 011</a>
-    </div>
+    <p class="lead">Nezávazně a bez registrace. Vyplňte pár údajů, zbytek doladíme po telefonu.</p>
+    <form class="qform" id="poptavka" novalidate>
+      <div class="qgrid">
+        <label>Firma *<input name="firma" required autocomplete="organization"></label>
+        <label>Jméno a příjmení *<input name="jmeno" required autocomplete="name"></label>
+        <label>E-mail *<input name="email" type="email" required autocomplete="email"></label>
+        <label>Telefon<input name="telefon" type="tel" autocomplete="tel"></label>
+        <label>Počet lidí / voucherů *<input name="pocet" type="number" min="1" inputmode="numeric" required></label>
+        <label>Hodnota na osobu (Kč) *<input name="hodnota" type="number" min="100" step="50" inputmode="numeric" required></label>
+        <label>Forma
+          <select name="forma">
+            <option>Elektronicky</option>
+            <option>V dárkovém balení</option>
+            <option>Zatím nevím</option>
+          </select>
+        </label>
+        <label>Do kdy je potřebujete<input name="termin" placeholder="např. do 10. 12."></label>
+        <label class="full">Personalizace nebo poznámka<textarea name="poznamka" rows="3" placeholder="Vlastní dopis, logo, vzkaz…"></textarea></label>
+        <label class="hp" aria-hidden="true">Nevyplňujte<input name="web" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <div class="qfoot">
+        <button class="btn" type="submit">Chci kalkulaci</button>
+        <a class="btn ghost" target="_top" href="tel:+420775686011">Nebo zavolejte: +420 775 686 011</a>
+      </div>
+      <p class="qmsg" role="status" aria-live="polite"></p>
+      <p class="qgdpr">Údaje použijeme jen pro přípravu nabídky.</p>
+    </form>
     <div class="person">
       <div><b>Barbora Taftová</b>+420 775 686 011<br><a href="mailto:barbora.taftova@skvelecesko.cz">barbora.taftova@skvelecesko.cz</a></div>
       <div><b>Lukáš Krhánek</b>+420 722 942 183<br><a href="mailto:lukas.krhanek@skvelecesko.cz">lukas.krhanek@skvelecesko.cz</a></div>
@@ -429,6 +461,52 @@ html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margi
     new ResizeObserver(send).observe(document.body);
     window.addEventListener('load', send);
     send();
+  })();
+</script>
+<script>
+  // Poptávkový formulář → Google Apps Script (tabulka + mail). Bez ENDPOINT otevře předvyplněný e-mail.
+  (function () {
+    var ENDPOINT = ''; // URL nasazené webové aplikace Apps Script (viz apps-script/README.md)
+    var MAIL = 'barbora.taftova@skvelecesko.cz';
+    var f = document.getElementById('poptavka');
+    if (!f) return;
+    var msg = f.querySelector('.qmsg');
+    var labels = { firma: 'Firma', jmeno: 'Jméno', email: 'E-mail', telefon: 'Telefon', pocet: 'Počet lidí', hodnota: 'Hodnota na osobu (Kč)', forma: 'Forma', termin: 'Termín', poznamka: 'Poznámka' };
+    var utm = new URLSearchParams(location.search);
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var ok = true, first = null;
+      f.querySelectorAll('[required]').forEach(function (el) {
+        var bad = !el.value.trim() || (el.type === 'email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value.trim()));
+        el.classList.toggle('bad', bad);
+        if (bad && !first) first = el;
+        if (bad) ok = false;
+      });
+      if (!ok) { msg.className = 'qmsg err'; msg.textContent = 'Doplňte prosím označená pole.'; first.focus(); return; }
+      if (f.web.value) return; // spam
+      var data = new URLSearchParams(new FormData(f));
+      data.delete('web');
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].forEach(function (k) { if (utm.get(k)) data.set(k, utm.get(k)); });
+      data.set('stranka', window.self !== window.top ? 'skvelecesko.cz/firmy (iframe)' : location.href);
+      if (!ENDPOINT) {
+        var body = Object.keys(labels).map(function (k) { return labels[k] + ': ' + (data.get(k) || '—'); }).join('\n');
+        window.top.location.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent('Poptávka firemních voucherů – ' + data.get('firma')) + '&body=' + encodeURIComponent(body);
+        return;
+      }
+      var btn = f.querySelector('button[type=submit]');
+      btn.disabled = true; msg.className = 'qmsg'; msg.textContent = 'Odesílám…';
+      fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: data })
+        .then(function () {
+          f.classList.add('sent'); msg.className = 'qmsg ok';
+          msg.textContent = 'Děkujeme! Kalkulaci vám pošleme obvykle do druhého pracovního dne.';
+          if (window.dataLayer) window.dataLayer.push({ event: 'poptavka_odeslana' });
+        })
+        .catch(function () {
+          btn.disabled = false; msg.className = 'qmsg err';
+          msg.textContent = 'Odeslání se nepovedlo. Napište prosím na ' + MAIL + ' nebo zavolejte +420 775 686 011.';
+        });
+    });
+    f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
   })();
 </script>
 </body></html>
