@@ -124,10 +124,12 @@ details p{font-size:15.5px;color:var(--soft);margin-top:12px;line-height:1.6}
 .askbox li{font-size:15px;color:#e5dbf0;display:flex;gap:11px}
 .askbox li::before{content:"";flex:none;width:9px;height:9px;margin-top:8px;background:var(--coral);
   border-radius:50% 50% 50% 4%;transform:rotate(-45deg)}
-.person{display:flex;gap:44px;flex-wrap:wrap;margin-top:28px}
-.person div{font-size:15px;color:#cfbfe0;line-height:1.7}
-.person b{display:block;color:#fff;font-size:17px;font-weight:700}
-.person a{color:#cfbfe0}
+.person{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px}
+.person div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:20px 22px;font-size:15px;color:#cfbfe0;line-height:1.5}
+.person b{display:block;color:#fff;font-size:17px;font-weight:700;margin-bottom:10px}
+.person a{display:block;color:#fff;text-decoration:none}
+.person a.tel{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+.person a:hover{color:var(--coral)}
 
 footer{background:#2c1841;color:#a996bd;font-size:13.5px;padding:30px 0}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
@@ -146,7 +148,7 @@ footer a{color:#a996bd}
 
 /* ---- vloženo jako iframe na skvelecesko.cz/firmy: bez vlastního menu a patičky ---- */
 html.embed .nav, html.embed footer{display:none}
-html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed body{background:#f6f6f6} html.embed .hero{padding-top:56px} @media (max-width:640px){html.embed .hero{padding-top:40px}} @media (min-width:901px){html.embed .hero{padding-top:96px} html.embed .hero h1{font-size:clamp(40px,5vw,62px)} html.embed .hero .sub{font-size:20px} html.embed .hero .bar{margin-top:84px}} html.embed [id]{scroll-margin-top:140px} html.embed body{min-height:100vh;display:flex;flex-direction:column} html.embed body>section{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center} html.embed body>section>*{width:100%} html.embed body>section.final{justify-content:flex-start} html.embed.measure body{min-height:0}
+html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed body{background:#f6f6f6} html.embed .hero{padding-top:56px} @media (max-width:640px){html.embed .hero{padding-top:40px}} @media (min-width:901px){html.embed .hero{padding-top:96px} html.embed .hero h1{font-size:clamp(40px,4.6vw,58px);text-wrap:balance} html.embed .hero .sub{font-size:20px} html.embed .hero .bar{margin-top:84px}} html.embed [id]{scroll-margin-top:140px} html.embed body{min-height:100vh;display:flex;flex-direction:column} html.embed body>section{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center} html.embed body>section>*{width:100%} html.embed body>section.final{justify-content:flex-start} html.embed.measure body{min-height:0}
 </style>
 <script>
   // v iframe (skvelecesko.cz/firmy) schovat vlastní menu a patičku
@@ -386,9 +388,9 @@ html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed body{background:#
       <a class="btn ghost" target="_top" href="tel:+420775686011">Zavolat: +420 775 686 011</a>
     </div>
     <div class="person">
-      <div><b>Barbora Taftová</b>+420 775 686 011<br><a href="mailto:barbora.taftova@skvelecesko.cz">barbora.taftova@skvelecesko.cz</a></div>
-      <div><b>Lukáš Krhánek</b>+420 722 942 183<br><a href="mailto:lukas.krhanek@skvelecesko.cz">lukas.krhanek@skvelecesko.cz</a></div>
-      <div><b>Zákaznická linka</b>+420 606 078 241<br><a href="mailto:jsme@skvelecesko.cz">jsme@skvelecesko.cz</a></div>
+      <div><b>Barbora Taftová</b><a class="tel" target="_top" href="tel:+420775686011">+420 775 686 011</a><a target="_top" href="mailto:barbora.taftova@skvelecesko.cz">barbora.taftova@skvelecesko.cz</a></div>
+      <div><b>Lukáš Krhánek</b><a class="tel" target="_top" href="tel:+420722942183">+420 722 942 183</a><a target="_top" href="mailto:lukas.krhanek@skvelecesko.cz">lukas.krhanek@skvelecesko.cz</a></div>
+      <div><b>Zákaznická linka</b><a class="tel" target="_top" href="tel:+420606078241">+420 606 078 241</a><a target="_top" href="mailto:jsme@skvelecesko.cz">jsme@skvelecesko.cz</a></div>
     </div>
   </div>
 </section>
