@@ -148,7 +148,7 @@ footer a{color:#a996bd}
 
 /* ---- vloženo jako iframe na skvelecesko.cz/firmy: bez vlastního menu a patičky ---- */
 html.embed .nav, html.embed footer{display:none}
-html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margin-top:140px}
+html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margin-top:140px} html.embed body{min-height:100vh;display:flex;flex-direction:column} html.embed body>section{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center} html.embed body>section>*{width:100%} html.embed.measure body{min-height:0}
 </style>
 <script>
   // v iframe (skvelecesko.cz/firmy) schovat vlastní menu a patičku
@@ -409,7 +409,11 @@ html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margi
     if (window.self === window.top) return;
     var last = 0;
     function send() {
-      var h = Math.ceil(document.documentElement.scrollHeight);
+      // přirozená výška bez roztažení sekcí (jinak by se iframe nikdy nezmenšil)
+      var de = document.documentElement;
+      de.classList.add('measure');
+      var h = Math.ceil(document.body.getBoundingClientRect().height);
+      de.classList.remove('measure');
       if (Math.abs(h - last) > 2) { last = h; parent.postMessage({ type: 'sclp-height', height: h }, '*'); }
     }
     // Kotvy (#kontakt, #jak) v iframe: posunout stránku rodiče, jinak klik nic neudělá
@@ -418,6 +422,7 @@ html.embed{scroll-padding-top:0;background:#f6f6f6} html.embed [id]{scroll-margi
       if (!a) return;
       var el = document.querySelector(a.getAttribute('href'));
       if (!el) return;
+      el = el.querySelector('h2') || el; // sekce jsou roztažené, cílit na nadpis
       e.preventDefault();
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
