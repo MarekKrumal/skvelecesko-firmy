@@ -385,8 +385,8 @@ html.embed{scroll-padding-top:0}
       </ul>
     </div>
     <div class="cta" style="display:flex;gap:14px;margin-top:26px;flex-wrap:wrap">
-      <a class="btn" href="mailto:barbora.taftova@skvelecesko.cz?subject=Pozadavek%20na%20firemni%20vouchery">Napsat e-mail</a>
-      <a class="btn ghost" href="tel:+420775686011">Zavolat: +420 775 686 011</a>
+      <a class="btn" target="_top" href="mailto:barbora.taftova@skvelecesko.cz?subject=Pozadavek%20na%20firemni%20vouchery">Napsat e-mail</a>
+      <a class="btn ghost" target="_top" href="tel:+420775686011">Zavolat: +420 775 686 011</a>
     </div>
     <div class="person">
       <div><b>Barbora Taftová</b>+420 775 686 011<br><a href="mailto:barbora.taftova@skvelecesko.cz">barbora.taftova@skvelecesko.cz</a></div>
@@ -412,6 +412,15 @@ html.embed{scroll-padding-top:0}
       var h = Math.ceil(document.documentElement.scrollHeight);
       if (Math.abs(h - last) > 2) { last = h; parent.postMessage({ type: 'sclp-height', height: h }, '*'); }
     }
+    // Kotvy (#kontakt, #jak) v iframe: posunout stránku rodiče, jinak klik nic neudělá
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      var el = document.querySelector(a.getAttribute('href'));
+      if (!el) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     new ResizeObserver(send).observe(document.body);
     window.addEventListener('load', send);
     send();
