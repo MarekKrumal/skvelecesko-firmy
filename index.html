@@ -421,7 +421,7 @@ html.embed .track{box-shadow:0 1px 2px rgba(60,34,87,.06)}
         <label>Příjmení<input name="lastname" type="text" autocomplete="family-name" required></label>
         <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
         <label>Telefon<input name="phone" type="tel" autocomplete="tel" required></label>
-        <label class="full">Firma / web<input name="company" type="text" autocomplete="organization" required></label>
+        <label class="full">Firma / web<input name="website" type="text" autocomplete="organization" required></label>
         <label class="full">Zpráva <small>(nepovinné)</small><textarea name="message" rows="4"></textarea></label>
       </div>
       <input type="text" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
@@ -477,8 +477,10 @@ html.embed .track{box-shadow:0 1px 2px rgba(60,34,87,.06)}
   })();
 </script>
 <script>
-  // Odeslání formuláře — nastavte adresu příjemce (HubSpot / Formspree / vlastní endpoint)
-  var LEAD_ENDPOINT = '';
+  // Odeslání formuláře do HubSpotu (Forms API, EU1)
+  var HS_URL = 'https://api.hsforms.com/submissions/v3/integration/submit/143124020/13a5cec7-44d2-44fd-8290-01f2af330df3';
+  var HS_FIELDS = ['firstname','lastname','email','phone','website','message'];
+  var HS_SOURCE = 'Firemní vouchery – web'; // hodnota pole „Zdroj Leadu“
   (function(){
     var f=document.getElementById('lead-form'), m=document.getElementById('lead-msg');
     if(!f) return;
@@ -491,9 +493,13 @@ html.embed .track{box-shadow:0 1px 2px rgba(60,34,87,.06)}
       });
       if(!ok){m.textContent='Vyplňte prosím všechna povinná pole.';return;}
       if(f.website_hp.value) return;
-      if(!LEAD_ENDPOINT){m.textContent='Formulář zatím není napojen.';return;}
       var btn=f.querySelector('button'); btn.disabled=true; m.textContent='Odesílám…';
-      fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(f)})
+      var fields=HS_FIELDS.map(function(n){return {name:n,value:f.elements[n].value.trim()};}).filter(function(x){return x.value;});
+      fields.push({name:'zdroj_leadu',value:HS_SOURCE});
+      fetch(HS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        fields:fields,
+        context:{pageUri:(window.self!==window.top&&document.referrer)||location.href,pageName:document.title}
+      })})
         .then(function(r){if(!r.ok) throw 0; f.reset(); m.textContent='Děkujeme, ozveme se vám do druhého dne.';})
         .catch(function(){m.textContent='Odeslání se nepovedlo. Napište nám prosím na barbora.taftova@skvelecesko.cz.';})
         .then(function(){btn.disabled=false;});
