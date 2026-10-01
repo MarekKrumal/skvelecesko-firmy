@@ -125,6 +125,20 @@ details p{font-size:15.5px;color:var(--soft);margin-top:12px;line-height:1.6}
 .final h2{color:#fff}
 .final .lead{color:#d5c7e4}
 @media(max-width:640px){.final{padding:48px 14px}.final>.wrap{padding:36px 22px;border-radius:24px}}
+.lead-form{margin-top:28px}
+.lead-form .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.lead-form label{display:block;font-size:14px;font-weight:600;color:#fff}
+.lead-form label.full{grid-column:1/-1}
+.lead-form small{font-weight:400;color:#bcaad0}
+.lead-form input,.lead-form textarea{display:block;width:100%;margin-top:6px;font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid transparent;border-radius:12px;padding:12px 14px}
+.lead-form textarea{resize:vertical;min-height:110px}
+.lead-form input:focus,.lead-form textarea:focus{outline:none;border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,88,89,.3)}
+.lead-form .invalid{border-color:var(--coral)}
+.lead-form .frow{display:flex;align-items:center;gap:18px;margin-top:20px;flex-wrap:wrap}
+.lead-form button{border:0;cursor:pointer;font:inherit;font-weight:600;font-size:16px;padding:14px 34px}
+.lead-form button:disabled{opacity:.6;cursor:default}
+.lead-form .fmsg{font-size:15px;color:#e5dbf0}
+@media(max-width:640px){.lead-form .fgrid{grid-template-columns:1fr}}
 .askbox{background:rgba(255,255,255,.08);border-radius:18px;padding:28px;margin-top:8px}
 .askbox ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px}
 .askbox li{font-size:15px;color:#e5dbf0;display:flex;gap:11px}
@@ -399,10 +413,21 @@ html.embed .track{box-shadow:0 1px 2px rgba(60,34,87,.06)}
         <li>Vlastní dopis, logo nebo vzkaz</li>
       </ul>
     </div>
-    <div class="cta" style="display:flex;gap:14px;margin-top:26px;flex-wrap:wrap">
-      <a class="btn" target="_top" href="mailto:barbora.taftova@skvelecesko.cz?subject=Pozadavek%20na%20firemni%20vouchery">Napsat e-mail</a>
-      <a class="btn ghost" target="_top" href="tel:+420775686011">Zavolat: +420 775 686 011</a>
-    </div>
+    <form class="lead-form" id="lead-form" novalidate>
+      <div class="fgrid">
+        <label>Jméno<input name="firstname" type="text" autocomplete="given-name" required></label>
+        <label>Příjmení<input name="lastname" type="text" autocomplete="family-name" required></label>
+        <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
+        <label>Telefon<input name="phone" type="tel" autocomplete="tel" required></label>
+        <label class="full">Firma / web<input name="company" type="text" autocomplete="organization" required></label>
+        <label class="full">Zpráva <small>(nepovinné)</small><textarea name="message" rows="4"></textarea></label>
+      </div>
+      <input type="text" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <div class="frow">
+        <button class="btn" type="submit">Odeslat</button>
+        <span class="fmsg" id="lead-msg" role="status"></span>
+      </div>
+    </form>
     <div class="person">
       <div><b>Barbora Taftová</b><a class="tel" target="_top" href="tel:+420775686011">+420 775 686 011</a><a target="_top" href="mailto:barbora.taftova@skvelecesko.cz">barbora.taftova@skvelecesko.cz</a></div>
       <div><b>Lukáš Krhánek</b><a class="tel" target="_top" href="tel:+420722942183">+420 722 942 183</a><a target="_top" href="mailto:lukas.krhanek@skvelecesko.cz">lukas.krhanek@skvelecesko.cz</a></div>
@@ -447,6 +472,30 @@ html.embed .track{box-shadow:0 1px 2px rgba(60,34,87,.06)}
     new ResizeObserver(send).observe(document.body);
     window.addEventListener('load', send);
     send();
+  })();
+</script>
+<script>
+  // Odeslání formuláře — nastavte adresu příjemce (HubSpot / Formspree / vlastní endpoint)
+  var LEAD_ENDPOINT = '';
+  (function(){
+    var f=document.getElementById('lead-form'), m=document.getElementById('lead-msg');
+    if(!f) return;
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var ok=true;
+      f.querySelectorAll('[required]').forEach(function(i){
+        var bad=!i.value.trim()||(i.type==='email'&&!/^\S+@\S+\.\S+$/.test(i.value));
+        i.classList.toggle('invalid',bad); if(bad) ok=false;
+      });
+      if(!ok){m.textContent='Vyplňte prosím všechna povinná pole.';return;}
+      if(f.website_hp.value) return;
+      if(!LEAD_ENDPOINT){m.textContent='Formulář zatím není napojen.';return;}
+      var btn=f.querySelector('button'); btn.disabled=true; m.textContent='Odesílám…';
+      fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(f)})
+        .then(function(r){if(!r.ok) throw 0; f.reset(); m.textContent='Děkujeme, ozveme se vám do druhého dne.';})
+        .catch(function(){m.textContent='Odeslání se nepovedlo. Napište nám prosím na barbora.taftova@skvelecesko.cz.';})
+        .then(function(){btn.disabled=false;});
+    });
   })();
 </script>
 </body></html>
